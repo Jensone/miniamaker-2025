@@ -77,6 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAtValue()
     {
         $this->created_at = new \DateTimeImmutable();
+        $this->updated_at = new \DateTimeImmutable();
     }
 
     #[ORM\PreUpdate]
@@ -252,8 +253,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDetail(Detail $detail): static
     {
         // set the owning side of the relation if necessary
-        if ($detail->getPros() !== $this) {
-            $detail->setPros($this);
+        if ($detail->getPro() !== $this) {
+            $detail->setPro($this);
         }
 
         $this->detail = $detail;
