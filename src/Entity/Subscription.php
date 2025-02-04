@@ -5,9 +5,7 @@ namespace App\Entity;
 use App\Repository\SubscriptionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\DecimalType;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Type;
 
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -22,7 +20,7 @@ class Subscription
      * @var Collection<int, User>
      */
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'subscription')]
-    private Collection $pros = null;
+    private Collection $clients;
 
     #[ORM\Column]
     private ?bool $is_active = null;
@@ -52,7 +50,7 @@ class Subscription
     public function __construct()
     {
         $this->promos = new ArrayCollection();
-        $this->pros = new ArrayCollection();
+        $this->clients = new ArrayCollection();
         $this->is_active = false;
         $this->amount = 99.97;
         $this->frequency = 'monthly';
@@ -74,18 +72,6 @@ class Subscription
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getPro(): ?User
-    {
-        return $this->pros;
-    }
-
-    public function setPro(Collection $pro): static
-    {
-        $this->pros = $pro;
-
-        return $this;
     }
 
     public function isActive(): ?bool
@@ -172,6 +158,36 @@ class Subscription
             // set the owning side to null (unless already changed)
             if ($promo->getSubscription() === $this) {
                 $promo->setSubscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getClients(): Collection
+    {
+        return $this->clients;
+    }
+
+    public function addClient(User $client): static
+    {
+        if (!$this->clients->contains($client)) {
+            $this->clients->add($client);
+            $client->setSubscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(User $client): static
+    {
+        if ($this->clients->removeElement($client)) {
+            // set the owning side to null (unless already changed)
+            if ($client->getSubscription() === $this) {
+                $client->setSubscription($this);
             }
         }
 
