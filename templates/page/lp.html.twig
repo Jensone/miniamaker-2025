@@ -1,18 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PageController!{% endblock %}
+{% block title %}La crème des pros au service du contenu{% endblock %}
 
 {% block body %}
-    {% include 'components/nav/public.html.twig' %}
-    <h1>LP SANS LOGIN</h1>
-    {% if app.user %}
-        <a href={{ path('app_logout') }}>
-            Déconnexion
-        </a>
-    {% else %}
-        <a href={{ path('app_login') }}>
-            Connexion
-        </a>
-    {% endif %}
+    {% include 'components/nav.html.twig' %}
+    <header class="vh-100 bg-primary text-white center">
+        <div class="container-md text-center">
+            <p class="">La plateforme dédiée aux créateurs de contenu</p>
+            <h1 class="text-3xl">
+                Mettez vos efforts dans votre contenu, les pros s'occupent du reste.
+            </h1>
+            <a href="{{ path('app_login') }}" class="btn btn-primary">
+                Créer un compte gratuitement
+            </a>
+        </div>
+    </header>
+
+    <section class="">
+    </section>
 
 {% endblock %}
+
