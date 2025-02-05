@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -14,5 +16,27 @@ final class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'controller_name' => 'UserController',
         ]);
+    }
+
+    #[Route('/complete', name: 'app_complete', methods: ['POST'])]
+    public function complete(Request $request, EntityManagerInterface $em): Response
+    {
+        $data = $request->getPayload();
+        if (!empty($data->get('username')) && !empty($data->get('fullname'))) {
+            // Enregistrer les données dans la base de données
+            $user = $this->getUser(); // Ici on récupère l'utilisateur actuel
+            $user
+                ->setUsername($data->get('username')) // on met à jour username
+                ->setFullname($data->get('fullname')) // on met à jour fullname
+                ;
+            $em->persist($user); // on persiste l'utilisateur
+            $em->flush(); // on sauvegarde les modifications en base de données
+            
+            // Redirection avec flash message
+            $this->addFlash('success', 'Votre profil est complété');
+        } else {
+            $this->addFlash('error', 'Vous devez remplir tous les champs');
+        }
+        return $this->redirectToRoute('app_profile');
     }
 }
