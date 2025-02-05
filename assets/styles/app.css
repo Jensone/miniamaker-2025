@@ -16,6 +16,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Lexend Mega", sans-serif;
 }
 
+.container-xs { max-width: 400px; }
 .container-sm { max-width: 600px; }
 .container-md { max-width: 800px; }
 .container-lg { max-width: 1000px; }
@@ -24,7 +25,12 @@ h1, h2, h3, h4, h5, h6 {
 .center { 
     display: grid;
     place-items: center;
- }
+}
+
+.help {
+    font-size: 0.95rem;
+    color: #555;
+}
 
 .text-xl { font-size: 3rem; }
 .text-2xl { font-size: 3.5rem; }
