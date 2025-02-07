@@ -7,14 +7,29 @@
 {% include 'components/nav.html.twig' %}
 
 <div class="container pt-5">
-    <header class="">
+    <div class="row">
+    <header class="col-md-3 p-3 text-center bg-white shadow-sm">
         <img src="{{ asset('medias/images/default.png') }}" alt="{{ app.user.username }}" class="img-fluid rounded-circle" width="120">
-    </header>
-    <section class="">
+        <hr>
+        <div class="text-start">
+            <p>{{ app.user.username }}</p>
+            <p>{{ app.user.fullname }}</p>
+            <p>{{ app.user.email }}</p>
+        </div>
+        <hr>
+        ABONNEMENT<br>
+        MA FICHE<br>
+        MES PAGES<br>
+        MESSAGERIE
 
+    </header>
+    <section class="col-md-9 p-3">
+    <div class="container-md">
         {{ form(userForm) }}
+    </div>
 
     </section>
+    </div>
 </div>
 
 {% if app.user.isVerified == false %}
