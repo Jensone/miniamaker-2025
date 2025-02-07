@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="vh-100 center">
-    <form action={{ path('app_complete') }} method="post" class="container-xs border rounded p-3">
+    <form action={{ path('app_complete') }} method="post" class="container-xs shadow bg-white p-3">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         <div class="form-group mb-3">
             <label for="username" class="form-label">Nom d'utilisateur</label>
