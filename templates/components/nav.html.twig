@@ -1,0 +1,13 @@
+<div class="border-bottom">
+    {% if app.user %}
+        {% if 'ROLE_PRO' in app.user.roles %}
+            {% include 'components/nav/pro.html.twig' %}
+        {% elseif 'ROLE_AGENT' in app.user.roles %}
+            {% include 'components/nav/agent.html.twig' %}
+        {% else %}
+            {% include 'components/nav/client.html.twig' %}
+        {% endif %}
+    {% else %}
+        {% include 'components/nav/public.html.twig' %}
+    {% endif %}
+</div>
