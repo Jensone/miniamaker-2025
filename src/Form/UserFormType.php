@@ -37,8 +37,11 @@ class UserFormType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'mapped' => false,
+                'toggle' => true,
+                'hidden_label' => 'Masquer',
+                'visible_label' => 'Afficher',
                 'row_attr' => ['class' => 'mb-3'],
-                'label' => 'Saisisez votre mot de passe pour mettre à jour votre profil',
+                'label' => 'Saisisez votre mot de passe',
                 'label_attr' => ['class' => 'form-label'],
                 'attr' => [
                     'placeholder' => 'Mot de passe',
