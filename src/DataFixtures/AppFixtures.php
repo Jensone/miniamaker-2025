@@ -101,7 +101,7 @@ class AppFixtures extends Fixture
             $nom = $faker->name();
             $prenom = $faker->firstName();
             $fullname = $prenom . ' ' . $nom;
-            $sluggy = $this->slugger->slug($fullname);
+            $sluggy = strtolower($this->slugger->slug($fullname));
 
             $user = new User();
             $user->setEmail($sluggy . '@' . $faker->freeEmailDomain());
