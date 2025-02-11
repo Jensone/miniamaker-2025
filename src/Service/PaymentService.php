@@ -34,8 +34,10 @@ class PaymentService
 
         try {
             $checkout_session = Session::create([
+                'payment_method_types' => ['card'],
                 'line_items' => [[
                     'price_data' => [
+                        'currency' => 'eur',
                         'unit_amount' => $amount * 100,
                         'recurring' => [
                             'interval' => $subscription->getFrequency(),
@@ -51,7 +53,7 @@ class PaymentService
                 'cancel_url' => $this->params->get('APP_URL') . '/subscription/cancel',
             ]);
 
-            return $checkout_session->url;
+            return $checkout_session->url ?? 'TEST';
         } catch (\Throwable $th) {
             echo $th->getMessage() . PHP_EOL;
             echo json_encode(['error' => $th->getMessage()]);
