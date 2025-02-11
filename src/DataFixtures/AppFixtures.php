@@ -44,10 +44,10 @@ class AppFixtures extends Fixture
             $nom = $faker->name();
             $prenom = $faker->firstName();
             $fullname = $prenom . ' ' . $nom;
-            $sluggy = $this->slugger->slug($fullname);
+            $sluggy = strtolower($this->slugger->slug($fullname));
 
             $user = new User();
-            $user->setEmail($sluggy . $faker->freeEmailDomain());
+            $user->setEmail($sluggy . '@' . $faker->freeEmailDomain());
             $user->setRoles(['ROLE_AGENT']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
             $user->setUsername($this->slugger->slug($prenom));
@@ -65,10 +65,10 @@ class AppFixtures extends Fixture
             $nom = $faker->name();
             $prenom = $faker->firstName();
             $fullname = $prenom . ' ' . $nom;
-            $sluggy = $this->slugger->slug($fullname);
+            $sluggy = strtolower($this->slugger->slug($fullname));
 
             $user = new User();
-            $user->setEmail($sluggy . $faker->freeEmailDomain());
+            $user->setEmail($sluggy . '@' . $faker->freeEmailDomain());
             $user->setRoles(['ROLE_AGENT']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
             $user->setUsername($this->slugger->slug($prenom));
