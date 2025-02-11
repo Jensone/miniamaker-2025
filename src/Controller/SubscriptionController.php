@@ -18,13 +18,14 @@ final class SubscriptionController extends AbstractController
         $subscription = $this->getUser()->getSubscription();
 
         if ($subscription == null || $subscription->isActive() === false) {
-            $ps->setPayment(
+            $checkoutUrl = $ps->setPayment(
                 $this->getUser(), 
                 intval($request->get('plan'))
             );
-        } else {
-            $this->addFlash('warning', "Vous êtes déjà abonné(e)");
-            return $this->redirectToRoute('app_profile');
+            return $this->redirect($checkoutUrl);
         }
+
+        $this->addFlash('warning', "Vous êtes déjà abonné(e)");
+        return $this->redirectToRoute('app_profile');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use Stripe\Price;
+
 use Stripe\Stripe;
 use App\Entity\User;
 use App\Entity\Subscription;
@@ -10,13 +10,9 @@ use Stripe\Checkout\Session;
 use App\Service\AbstractService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SubscriptionRepository;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
-/*
- * Classe PaymentService dédiée à la gestion du 
- * paiement des abonnements des utilisateurs
-*/
 
 class PaymentService extends AbstractService
 {
@@ -25,14 +21,9 @@ class PaymentService extends AbstractService
         private SubscriptionRepository $sr,
         private EntityManagerInterface $em,
         private HttpClientInterface $httpClient,
-    ) {
-        $this->params = $params;
-        $this->sr = $sr;
-        $this->em = $em;
-        $this->httpClient = $httpClient;
-    }
+    ) {}
 
-    public function setPayment(User $user, int $amount): void
+    public function setPayment(User $user, int $amount): string
     {
         Stripe::setApiKey($this->params->get('STRIPE_SK'));
 
@@ -40,13 +31,22 @@ class PaymentService extends AbstractService
         $subscription
             ->setClient($user)
             ->setAmount($amount)
-            ->setFrequency($amount > 99 ? $this->params->get('STRIPE_SUB_ANNUALLY') : $this->params->get('STRIPE_SUB_MONTHLY'))
+            ->setFrequency($amount > 99 ? 'year' : 'month')
         ;
 
         try {
             $checkout_session = Session::create([
                 'line_items' => [[
-                    'price' => $subscription->getFrequency(),
+                    'price_data' => [
+                        'currency' => 'eur',
+                        'unit_amount' => $amount * 100,
+                        'recurring' => [
+                            'interval' => $subscription->getFrequency(),
+                        ],
+                        'product_data' => [
+                            'name' => 'Abonnement miniamaker',
+                        ],
+                    ],
                     'quantity' => 1,
                 ]],
                 'mode' => 'subscription',
@@ -54,10 +54,10 @@ class PaymentService extends AbstractService
                 'cancel_url' => $this->params->get('APP_URL') . '/subscription/cancel',
             ]);
 
-            $this->httpClient->request('GET', $checkout_session->url);
+            return $checkout_session->url;
         } catch (\Throwable $th) {
-            throw $th;
+            echo $th->getMessage() . PHP_EOL;
+            echo json_encode(['error' => $th->getMessage()]);
         }
-        // dd($subscription);
     }
 }
