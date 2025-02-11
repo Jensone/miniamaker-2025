@@ -17,15 +17,14 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class PaymentService extends AbstractService
 {
     public function __construct(
-        private readonly ParameterBagInterface $params,
-        private readonly SubscriptionRepository $sr,
-        private readonly EntityManagerInterface $em,
+        private ParameterBagInterface $params,
+        private SubscriptionRepository $sr,
+        private EntityManagerInterface $em,
     ) 
     {
         $this->params = $params;
         $this->sr = $sr;
         $this->em = $em;
-        // parent::__construct();
     }
 
     public function setPayment(User $user, int $amount): void
