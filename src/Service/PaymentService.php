@@ -7,14 +7,12 @@ use Stripe\Stripe;
 use App\Entity\User;
 use App\Entity\Subscription;
 use Stripe\Checkout\Session;
-use App\Service\AbstractService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SubscriptionRepository;
-use SebastianBergmann\CodeCoverage\Report\PHP;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class PaymentService extends AbstractService
+class PaymentService
 {
     public function __construct(
         private ParameterBagInterface $params,
@@ -38,7 +36,6 @@ class PaymentService extends AbstractService
             $checkout_session = Session::create([
                 'line_items' => [[
                     'price_data' => [
-                        'currency' => 'eur',
                         'unit_amount' => $amount * 100,
                         'recurring' => [
                             'interval' => $subscription->getFrequency(),
