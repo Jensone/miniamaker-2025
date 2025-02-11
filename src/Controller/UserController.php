@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class UserController extends AbstractController
 {
@@ -16,7 +17,8 @@ final class UserController extends AbstractController
     public function index(
         Request $request, 
         EntityManagerInterface $em,
-        UploaderService $us
+        UploaderService $us,
+        UserPasswordHasherInterface $passwordHasher
         ): Response
     {
         $user = $this->getUser();
@@ -24,8 +26,14 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $password = $passwordHasher->isPasswordValid( // isPasswordValid() retourne true ou false
+                $user, // Utilisateur actuel
+                $form->get('password')->getData() // Récupère le password du formulaire
+            );
 
-            if (true) { // TODO: Vérification de mot de passe
+            if ($password) 
+            { // TODO: Vérification de mot de passe
                 $image = $form->get('image')->getData(); // Récupère l'image
                 if ($image != null) { // Si l'image est téléversée
                     $user->setImage( // Méthode de mutation de l'image
@@ -38,10 +46,13 @@ final class UserController extends AbstractController
 
                 $em->persist($user);
                 $em->flush();
+                
+                // Redirection avec flash message
+                $this->addFlash('success', 'Votre profil à été mis à jour');
+            }  else {
+                $this->addFlash('error', 'Une erreur est survenue');
             }
 
-            // Redirection avec flash message
-            $this->addFlash('success', 'Votre profil à été mis à jour');
             return $this->redirectToRoute('app_profile');
         }
 
