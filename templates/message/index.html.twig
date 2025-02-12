@@ -20,7 +20,9 @@
                         <img src="{{ asset('medias/images/default.png') }}" alt="{{ item.subject }}" width="25">
                     </td>
                     <td class="">
-                        <p class="fs-5 fw-bold">{{ item.subject }}</p>
+                        <a href="{{ path('app_message_show', { id: item.id }) }}" class="text-danger text-decoration-none">
+                            <p class="fs-5 fw-bold">{{ item.subject }}</p>
+                        </a>
                         <p class="help text-secondary">{{ item.messages|length  }} messages</p>
                     </td>
                     <td class="help text-secondary">

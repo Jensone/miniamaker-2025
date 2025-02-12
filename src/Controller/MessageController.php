@@ -13,8 +13,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class MessageController extends AbstractController
 {
     public function __construct(
-        private DiscussionRepository $ds,
-        private MessageRepository $ms,
+        private DiscussionRepository $dr,
+        private MessageRepository $mr,
     ){}
 
     #[Route('/messages', name: 'app_message', methods: ['GET'])]
@@ -22,6 +22,14 @@ final class MessageController extends AbstractController
     {
         return $this->render('message/index.html.twig', [
 
+        ]);
+    }
+
+    #[Route('/messages/{id}', name: 'app_message_show', methods: ['GET', 'POST'])]
+    public function show($id): Response
+    {
+        return $this->render('message/show.html.twig', [
+            'messages' => $this->mr->findByDiscussion($id, ['created_at' => 'DESC']),
         ]);
     }
 }
