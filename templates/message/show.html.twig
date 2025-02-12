@@ -4,7 +4,24 @@
 
 {% block body %}
 
-{{ dump(messages) }}
+<div class="position-relative container-sm center mt-5">
+    <h1 class="text-center mb-5">Liste de vos disscusions</h1>
+    <div class="bg-white rounded-3 shadow-sm p-3">
+        <form action="" method="post" class="d-flex justify-content-betwee mb-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token('app_message') }}">
+            <input type="text" name="message" id="message" class="form-control" placeholder="Écrivez ici">
+            <button type="submit" class="btn btn-primary">{{ ux_icon('mdi:send', { class: 'h-1' }) }}</button>
+        </form>
+        <div class="d-flex flex-column gap-2 p-2">
+            {% for item in messages %}
+                <div class="bubble {{ item.user == app.user ? 'bg-indigo-200 mx-end' : 'bg-fuschia-200' }}">
+                    <p class="mb-1 {{ item.user == app.user ? '' : '' }}">{{ item.content }}</p>
+                </div>
+                <p class="help fst-italic {{ item.user == app.user ? 'text-end' : 'text-start' }}">{{ item.user.username == app.user.username ? 'moi' : item.user.username }}, il y a {{ item.createdAt|time_diff }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
 
 
