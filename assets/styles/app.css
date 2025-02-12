@@ -13,9 +13,7 @@ body {
     font-family: "Inter Tight", sans-serif;
     letter-spacing: 0.02rem;
     line-height: 1.5;
-    background-color: #f8f9fa;
-    background-image: url("/medias/images/bg.svg");
-    background-size: cover;
+    background: #f8fafc;
 }
 
 /* Layout */
