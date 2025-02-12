@@ -41,6 +41,12 @@ final class MessageController extends AbstractController
 
             $this->em->persist($mes);
             $this->em->flush();
+
+            if ($request->headers->get('HX-Request')) {
+                return $this->render('message/_message.html.twig', [
+                    'item' => $mes
+                ]);
+            }
         }
 
         return $this->render('message/show.html.twig', [
