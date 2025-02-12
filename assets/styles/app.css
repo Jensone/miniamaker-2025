@@ -62,7 +62,7 @@ h1, h2, h3, h4, h5, h6 {
 .bubble {
     border-radius: 1rem;
     padding: 1rem 2rem;
-    margin-bottom: 1.75rem;
+    margin-bottom: .25rem;
     border-radius: 0.5rem;
     max-width: 50%;
     width: fit-content;
