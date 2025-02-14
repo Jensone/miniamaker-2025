@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class DetailController extends AbstractController
 {
+    // Le constructeur permet de ne pas avoir à passer les dépendances en paramètres
     public function __construct(
         private EntityManagerInterface $em,
         private DetailRepository $dr
