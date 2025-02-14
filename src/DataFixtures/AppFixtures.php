@@ -2,23 +2,29 @@
 
 namespace App\DataFixtures;
 
+use Faker\Factory;
+use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Detail;
-use App\Entity\Tag;
-use App\Entity\Subscription;
-use App\Entity\Promo;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\Message;
+use App\Entity\Discussion;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private $passwordHasher;
+    private $slugger;
 
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    public function __construct(
+        UserPasswordHasherInterface $passwordHasher,
+        SluggerInterface $slugger
+        )
     {
         $this->passwordHasher = $passwordHasher;
+        $this->slugger = $slugger;
     }
 
     public function load(ObjectManager $manager): void
@@ -37,12 +43,17 @@ class AppFixtures extends Fixture
 
         // Création des utilisateurs
         for ($i = 0; $i < 40; $i++) {
+            $nom = $faker->name();
+            $prenom = $faker->firstName();
+            $fullname = $prenom . ' ' . $nom;
+            $sluggy = strtolower($this->slugger->slug($fullname));
+
             $user = new User();
-            $user->setEmail($faker->email());
-            $user->setRoles(['ROLE_CLIENT']);
+            $user->setEmail($sluggy . '@' . $faker->freeEmailDomain());
+            $user->setRoles(['ROLE_AGENT']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
-            $user->setUsername($faker->userName());
-            $user->setFullname($faker->name());
+            $user->setUsername($this->slugger->slug($prenom));
+            $user->setFullname($fullname);
             $user->setIsMajor(false);
             $user->setIsTerms(true);
             $user->setIsGpdr(true);
@@ -53,12 +64,17 @@ class AppFixtures extends Fixture
 
         // Création des utilisateurs PRO
         for ($i = 0; $i < 50; $i++) {
+            $nom = $faker->name();
+            $prenom = $faker->firstName();
+            $fullname = $prenom . ' ' . $nom;
+            $sluggy = strtolower($this->slugger->slug($fullname));
+
             $user = new User();
-            $user->setEmail($faker->email());
-            $user->setRoles(['ROLE_PRO']);
+            $user->setEmail($sluggy . '@' . $faker->freeEmailDomain());
+            $user->setRoles(['ROLE_AGENT']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
-            $user->setUsername($faker->userName());
-            $user->setFullname($faker->name());
+            $user->setUsername($this->slugger->slug($prenom));
+            $user->setFullname($fullname);
             $user->setIsMajor(false);
             $user->setIsTerms(true);
             $user->setIsGpdr(true);
@@ -83,12 +99,18 @@ class AppFixtures extends Fixture
         
         // Création des utilisateurs AGENT
         for ($i = 0; $i < 25; $i++) {
+
+            $nom = $faker->name();
+            $prenom = $faker->firstName();
+            $fullname = $prenom . ' ' . $nom;
+            $sluggy = strtolower($this->slugger->slug($fullname));
+
             $user = new User();
-            $user->setEmail($faker->email());
+            $user->setEmail($sluggy . '@' . $faker->freeEmailDomain());
             $user->setRoles(['ROLE_AGENT']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
-            $user->setUsername($faker->userName());
-            $user->setFullname($faker->name());
+            $user->setUsername($this->slugger->slug($prenom));
+            $user->setFullname($fullname);
             $user->setIsMajor(false);
             $user->setIsTerms(true);
             $user->setIsGpdr(true);
@@ -116,14 +138,54 @@ class AppFixtures extends Fixture
         $admin->setEmail('admin@admin.com');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
-        $admin->setUsername('admin');
-        $admin->setFullname('Admin User');
+        $admin->setUsername('Martine');
+        $admin->setFullname('Admin Martine');
         $admin->setIsMajor(true);
         $admin->setIsTerms(true);
         $admin->setIsGpdr(true);
         $admin->setIsVerified(true);
         
         $manager->persist($admin);
+        
+        // Créer un admin
+        $admin2 = new User();
+        $admin2->setEmail('admin2@admin.com');
+        $admin2->setRoles(['ROLE_ADMIN']);
+        $admin2->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
+        $admin2->setUsername('Martin');
+        $admin2->setFullname('Admin Martin');
+        $admin2->setIsMajor(true);
+        $admin2->setIsTerms(true);
+        $admin2->setIsGpdr(true);
+        $admin2->setIsVerified(true);
+        
+        $manager->persist($admin2);
+
+
+        // Conversion en 2 user
+
+        $discussion = new Discussion();
+        $discussion
+            ->setSender($admin)
+            ->setReceiver($admin2)
+            ->setSubject($admin->getUsername() . ' x ' . $admin2->getUsername())
+            ->setIsArchived(false)
+            ->setCreatedAt(new \DateTimeImmutable())
+            ;
+            $manager->persist($discussion);
+
+            for($i = 0; $i < 10; $i++) {
+                $message = new Message();
+                $message
+                    ->setDiscussion($discussion)
+                    ->setUser($i % 2 === 0 ? $admin : $admin2)
+                    ->setContent($faker->sentence(10))
+                    ->setStatus(true)
+                    ->setCreatedAt(new \DateTimeImmutable())
+                    ;
+
+                $manager->persist($message);
+            }
 
         $manager->flush();
     }
